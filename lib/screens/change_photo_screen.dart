@@ -2,10 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../endpoints.dart';
 import '../widgets/custom_app_bar.dart';
 
 class ChangePhotoScreen extends StatefulWidget {
-  const ChangePhotoScreen({super.key});
+  final String plantId;
+  final String photoUrl;
+
+  const ChangePhotoScreen({super.key,required this.plantId,required this.photoUrl});
 
   @override
   State<ChangePhotoScreen> createState() => _ChangePhotoScreenState();
@@ -14,11 +18,13 @@ class ChangePhotoScreen extends StatefulWidget {
 class _ChangePhotoScreenState extends State<ChangePhotoScreen> {
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
-
+  late  String imagePath = '';
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
+      imagePath=pickedFile.path;
       print('Путь к изображению: ${pickedFile.path}');
+
       setState(() {
         _selectedImage = File(pickedFile.path);
       });
@@ -51,10 +57,26 @@ class _ChangePhotoScreenState extends State<ChangePhotoScreen> {
               height: MediaQuery.of(context).size.height * 0.5,
               fit: BoxFit.cover,
             )
+                :  (widget.photoUrl.isNotEmpty)
+                ? Image.network(
+              widget.photoUrl,
+              height: 200,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(child: CircularProgressIndicator());
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  'assets/plant.png',
+                  height: 200,
+                  fit: BoxFit.cover,
+                );
+              },
+            )
                 : Image.asset(
               'assets/plant.png',
-              width: MediaQuery.of(context).size.width * 0.5,
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: 200,
               fit: BoxFit.cover,
             ),
             const SizedBox(height: 20),
@@ -75,7 +97,20 @@ class _ChangePhotoScreenState extends State<ChangePhotoScreen> {
             ),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                final result = await PlantApiService.uploadPhoto(  plantId: widget.plantId, imageFile: File(imagePath),
+                );
+
+                if (result) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Фото успешно отправлено!')),
+                  );
+                } else {
+                  // Показать сообщение об ошибке
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Ошибка, Фото не сохранено!.')),
+                  );
+                }
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(
@@ -96,4 +131,8 @@ class _ChangePhotoScreenState extends State<ChangePhotoScreen> {
       ),
     );
   }
+
+
+
+
 }

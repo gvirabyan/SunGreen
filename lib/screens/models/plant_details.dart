@@ -4,7 +4,7 @@ class PlantDetails {
   final String type;
   final DateTime? lastWatered;
   final DateTime? nextWatering;
-  final DateTime? lastPhoto;
+  final String? lastPhoto;
   final SensorData? lastSensorData;
 
   PlantDetails({
@@ -22,15 +22,13 @@ class PlantDetails {
       plantId: json['plant_id'],
       name: json['name'],
       type: json['type'],
-      lastWatered: json['last_watered'] != null
-          ? DateTime.parse(json['last_watered'])
+      lastWatered: json['last_watered'] != null && json['last_watered'] is String
+          ? DateTime.tryParse(json['last_watered']) // Используем tryParse для безопасного парсинга
           : null,
-      nextWatering: json['next_watering'] != null
-          ? DateTime.parse(json['next_watering'])
+      nextWatering: json['next_watering'] != null && json['next_watering'] is String
+          ? DateTime.tryParse(json['next_watering']) // Используем tryParse для безопасного парсинга
           : null,
-      lastPhoto: json['last_photo'] != null
-          ? DateTime.parse(json['last_photo'])
-          : null,
+      lastPhoto: json['last_photo'], // Оставляем как строку URL
       lastSensorData: json['last_sensor_data'] != null
           ? SensorData.fromJson(json['last_sensor_data'])
           : null,
@@ -42,9 +40,9 @@ class PlantDetails {
       'plant_id': plantId,
       'name': name,
       'type': type,
-      'last_watered': lastWatered?.toIso8601String(),
-      'next_watering': nextWatering?.toIso8601String(),
-      'last_photo': lastPhoto?.toIso8601String(),
+      'last_watered': lastWatered?.toIso8601String(), // Конвертируем DateTime в строку
+      'next_watering': nextWatering?.toIso8601String(), // Конвертируем DateTime в строку
+      'last_photo': lastPhoto, // Оставляем URL как строку
       'last_sensor_data': lastSensorData?.toJson(),
     };
   }
@@ -74,8 +72,8 @@ class SensorData {
       soilMoisture: json['soil_moisture']?.toDouble(),
       light: json['light']?.toDouble(),
       gasQuality: json['gas_quality']?.toDouble(),
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
+      createdAt: json['created_at'] != null && json['created_at'] is String
+          ? DateTime.tryParse(json['created_at']) // Используем tryParse для безопасного парсинга
           : null,
     );
   }

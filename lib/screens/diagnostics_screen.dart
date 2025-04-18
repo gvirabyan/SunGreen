@@ -42,7 +42,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4D79F),
         elevation: 0,
-        title: const Text('Диагностика', style: TextStyle(color: Colors.black)),
+        title: const Text('', style: TextStyle(color: Colors.black)),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       backgroundColor: const Color(0xFFF3E3B4),

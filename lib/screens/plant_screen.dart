@@ -8,8 +8,9 @@ import '../endpoints.dart';
 
 class PlantScreen extends StatefulWidget {
   final String plantId;
+  final String photoUrl;
 
-  const PlantScreen({super.key, required this.plantId});
+  const PlantScreen({super.key, required this.plantId, required this.photoUrl});
 
   @override
   State<PlantScreen> createState() => _PlantScreenState();
@@ -28,6 +29,7 @@ class _PlantScreenState extends State<PlantScreen> {
   Future<void> loadPlantDetails() async {
     try {
       final data = await PlantApiService.plantDetails(widget.plantId);
+      // final urlString = await PlantApiService.fetchPlantPhoto(widget.plantId);
       setState(() {
         details = data;
         isLoading = false;
@@ -68,7 +70,30 @@ class _PlantScreenState extends State<PlantScreen> {
                     ),
 
                     const SizedBox(height: 20),
-                    Image.asset('assets/plant.png', height: 200),
+
+                    (widget.photoUrl.isNotEmpty)
+                        ? Image.network(
+                          widget.photoUrl,
+                          height: 200,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(child: CircularProgressIndicator());
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/plant.png',
+                              height: 200,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        )
+                        : Image.asset(
+                          'assets/plant.png',
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
+
                     const SizedBox(height: 20),
                     Container(
                       decoration: BoxDecoration(
@@ -225,7 +250,10 @@ class _PlantScreenState extends State<PlantScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ChangePhotoScreen(),
+                                builder:
+                                    (context) => ChangePhotoScreen(
+                                      plantId: widget.plantId,photoUrl:widget.photoUrl ,
+                                    ),
                               ),
                             );
                           },
@@ -254,7 +282,11 @@ class _PlantScreenState extends State<PlantScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DiagnosticsScreen(plantId: '7a240153-f8f2-43bd-839b-ff479d855abb',),
+                                builder:
+                                    (context) => DiagnosticsScreen(
+                                      plantId:
+                                          '7a240153-f8f2-43bd-839b-ff479d855abb',
+                                    ),
                               ),
                             );
                           },
@@ -283,7 +315,7 @@ class _PlantScreenState extends State<PlantScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => HistoryScreen(),
+                                builder: (context) => HistoryScreen(plantId: widget.plantId,),
                               ),
                             );
                           },

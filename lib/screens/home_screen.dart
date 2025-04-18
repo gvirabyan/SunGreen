@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:untitled14/screens/plant_screen.dart';
 
 import '../endpoints.dart';
+import '../local_notificationService.dart';
 import 'add_plant_screen.dart';
 import 'models/plant.dart';
 
@@ -14,16 +15,32 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Plant>> _plantsFuture;
 
+  bool _shouldWater = false;
+
   @override
   void initState() {
     super.initState();
     _plantsFuture = PlantApiService.fetchPlants();
+    LocalNotificationService.initialize();
+    _checkWateringStatus();
+  }
+
+  void _checkWateringStatus() async {
+    bool result = await PlantApiService.shouldWaterPlantsToday();
+    setState(() {
+      _shouldWater = result;
+    });
+    if (_shouldWater) {
+      String plantName =
+          'Монстера'; // Например, здесь можно брать имя растения из модели
+      LocalNotificationService.showNotificationWithPlantName(plantName);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:  Color(0xFFF9EED9),
+      backgroundColor: Color(0xFFF9EED9),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await showDialog(
@@ -40,9 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         backgroundColor: Color(0xFF688C28),
 
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
         child: Icon(Icons.add, color: Colors.white),
       ),
       body: Stack(
@@ -87,31 +102,71 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                     // Если данные успешно загружены
                     final plants = snapshot.data!;
-                    print(plants.length);
                     return ListView.builder(
                       shrinkWrap: true,
                       itemCount: plants.length,
                       itemBuilder: (context, index) {
                         final plant = plants[index];
+                        if (plant.photoUrl != null) {
+                          print(plant.photoUrl);
+                        }
                         return ListTile(
                           leading: CircleAvatar(
-                            child: Image.asset('assets/plant.png'),
+                            backgroundColor: Colors.transparent,
+                            child:
+                                (plant.photoUrl != null &&
+                                        plant.photoUrl!.isNotEmpty)
+                                    ? Image.network(
+                                      plant.photoUrl!,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (
+                                        context,
+                                        child,
+                                        loadingProgress,
+                                      ) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      },
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Image.asset(
+                                          'assets/plant.png',
+                                          height: 200,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    )
+                                    : Image.asset(
+                                      'assets/plant.png',
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    ),
                           ),
+
                           title: Text(plant.name),
                           subtitle: Text(plant.type),
-                          onTap: (){
-                           // print(plant.id);
+                          onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PlantScreen(plantId: plant.id,
-
-                                ),
+                                builder:
+                                    (context) => PlantScreen(
+                                      plantId: plant.id,
+                                      photoUrl: plant.photoUrl ?? '',
+                                    ),
                               ),
-                            );                           },
+                            );
+                          },
                         );
                       },
-                        physics: NeverScrollableScrollPhysics()
+                      physics: NeverScrollableScrollPhysics(),
                     );
                   },
                 ),
