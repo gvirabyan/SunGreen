@@ -106,7 +106,6 @@ class _ChangePhotoScreenState extends State<ChangePhotoScreen> {
                     SnackBar(content: Text('Фото успешно отправлено!')),
                   );
                 } else {
-                  // Показать сообщение об ошибке
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Ошибка, Фото не сохранено!.')),
                   );

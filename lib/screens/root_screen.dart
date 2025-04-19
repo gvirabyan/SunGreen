@@ -28,7 +28,6 @@ class _RootScreenState extends State<RootScreen> {
         children: [
           _pages[_selectedIndex],
 
-          // Вертикальный список букв с ограниченной шириной
 
         ],
       ),

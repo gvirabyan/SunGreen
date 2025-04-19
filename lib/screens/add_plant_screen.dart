@@ -187,7 +187,6 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-// Проверка, что поля не пустые
                   if (nameController.text.trim().isEmpty || selectedPlantType.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Заполните все поля')),
@@ -195,7 +194,6 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                     return;
                   }
 
-                  // Вызов API
                   try {
                     await  PlantApiService.addPlant(
                     name: nameController.text.trim(),
@@ -203,10 +201,8 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                     lastWatered: selectedDate,
                     );
 
-                    // Закрываем диалог, если всё успешно
                     Navigator.pop(context);
 
-                    // Можно показать сообщение об успехе
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('✅ Растение добавлено')),
                     );

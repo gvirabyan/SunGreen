@@ -158,7 +158,6 @@ class _ProfileSettingsPageState extends State<ProfileSettingsScreen> {
                         setState(() => notifications = true);
                       }
                     } else {
-                      // Для старых Android — разрешения не требуется
                       setState(() => notifications = true);
                     }
                   } else {

@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     if (_shouldWater) {
       String plantName =
-          'Монстера'; // Например, здесь можно брать имя растения из модели
+          'Монстера';
       LocalNotificationService.showNotificationWithPlantName(plantName);
     }
   }
@@ -84,11 +84,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-                // Загрузка данных с API и отображение списка растений
                 FutureBuilder<List<Plant>>(
                   future: _plantsFuture,
                   builder: (context, snapshot) {
-                    // Пока данные загружаются
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
                     }
@@ -96,11 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (snapshot.hasError) {
                       return Center(child: Text('Ошибка: ${snapshot.error}'));
                     }
-                    // Если данных нет
                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Center(child: Text('Список растений пуст'));
                     }
-                    // Если данные успешно загружены
                     final plants = snapshot.data!;
                     return ListView.builder(
                       shrinkWrap: true,
@@ -173,7 +169,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          // Вертикальный алфавит справа
           Positioned(
             right: 0,
             top: 80,

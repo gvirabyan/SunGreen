@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'root_screen.dart';
 
 class StartScreen extends StatefulWidget {
+  const StartScreen({super.key});
+
   @override
   _StartScreenState createState() => _StartScreenState();
 }
@@ -43,6 +43,7 @@ class _StartScreenState extends State<StartScreen>
     return Scaffold(
       body: Stack(
         children: [
+          // Фон
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -53,6 +54,7 @@ class _StartScreenState extends State<StartScreen>
               ),
             ),
           ),
+
           Positioned(
             top: screenHeight * 0.1,
             left: screenWidth * 0.1,
@@ -64,6 +66,13 @@ class _StartScreenState extends State<StartScreen>
                   fontFamily: 'Cartoon',
                   fontSize: 50,
                   fontWeight: FontWeight.bold,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(3, 3),
+                      blurRadius: 6.0,
+                      color: Colors.black.withOpacity(0.9),
+                    ),
+                  ],
                 ),
                 children: [
                   TextSpan(text: 'S', style: TextStyle(color: Color(0xFFD16980))),
@@ -79,7 +88,7 @@ class _StartScreenState extends State<StartScreen>
               ),
             ),
           ),
-          // Кнопка внизу с анимацией
+
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -93,9 +102,7 @@ class _StartScreenState extends State<StartScreen>
                   );
                 },
                 child: ElevatedButton(
-                  onPressed: ()  {
-
-
+                  onPressed: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => RootScreen()),

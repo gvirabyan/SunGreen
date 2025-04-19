@@ -29,7 +29,6 @@ class _PlantScreenState extends State<PlantScreen> {
   Future<void> loadPlantDetails() async {
     try {
       final data = await PlantApiService.plantDetails(widget.plantId);
-      // final urlString = await PlantApiService.fetchPlantPhoto(widget.plantId);
       setState(() {
         details = data;
         isLoading = false;
@@ -163,7 +162,7 @@ class _PlantScreenState extends State<PlantScreen> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Colors.white70,
-                                      fontSize: 12,
+                                      fontSize: 10,
                                     ),
                                   ),
                                 ],
@@ -185,13 +184,58 @@ class _PlantScreenState extends State<PlantScreen> {
                                     'temperature',
                                     style: TextStyle(
                                       color: Colors.white70,
-                                      fontSize: 12,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    details?.lastSensorData?.light != null
+                                        ? '${details!.lastSensorData!.light}'
+                                        : '—',
+
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'light',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    details?.lastSensorData?.gasQuality != null
+                                        ? '${details!.lastSensorData!.gasQuality}'
+                                        : '—',
+
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'gas quality',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 10,
                                     ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 10),
                           Row(
                             children: [
@@ -224,6 +268,7 @@ class _PlantScreenState extends State<PlantScreen> {
                             ],
                           ),
                           const SizedBox(height: 16),
+
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
@@ -252,7 +297,8 @@ class _PlantScreenState extends State<PlantScreen> {
                               MaterialPageRoute(
                                 builder:
                                     (context) => ChangePhotoScreen(
-                                      plantId: widget.plantId,photoUrl:widget.photoUrl ,
+                                      plantId: widget.plantId,
+                                      photoUrl: widget.photoUrl,
                                     ),
                               ),
                             );
@@ -315,7 +361,9 @@ class _PlantScreenState extends State<PlantScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => HistoryScreen(plantId: widget.plantId,),
+                                builder:
+                                    (context) =>
+                                        HistoryScreen(plantId: widget.plantId),
                               ),
                             );
                           },
